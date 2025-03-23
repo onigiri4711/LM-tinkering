@@ -1,0 +1,62 @@
+#can be run in google colab at https://colab.research.google.com/drive/1R8UbNVR-oPaAXQTVuPUmNuROzGQNwI-J
+import nltk
+import random
+from collections import defaultdict
+
+# Download the necessary NLTK data
+nltk.download('punkt')
+nltk.download('punkt_tab')
+# News article sourced from the Associated Press. Link: https://screenrant.com/one-piece-egghead-island-return-double-length-episode/
+article  = '''
+With One Piece coming off its hiatus with an extra-long premiere, that begs the question of how much of the manga it will cover.
+
+Even with the hiatus, One Piece will likely stick to its model of only adapting roughly one chapter per episode, and since episode #1122 covered chapter #1088, the two-episode premiere should go up to chapter #1090.
+
+As such, One Piece’s extra-long premiere will likely go up to when Kizaru enters Egghead to personally deal with Vegapunk, all of which will likely be padded out with filler scenes and a bit of recap.
+
+That, of course, would be a perfect stopping point for the anime. With the anime having been off the air for half a year, the first new content people get needs to be as big as possible, so One Piece’s extra-long premiere ending with Kizaru entering the battlefield and Luffy sweating as he senses his presence can perfectly welcome people back by ending on such a big and climactic note.
+
+Naturally, it’s still unknown if things will really play out like that, but ideally, things won’t stray too far from that idea.
+
+It’s great to have more details about One Piece’s return, and they make it all the more exciting.
+
+For starters, the anime went on hiatus right before the Egghead arc got into some of its biggest events like Luffy and Kizaru’s fight, Kuma’s tragic backstory, and, of course, Vegapunk’s speech to the world as the Straw Hats struggle to escape the Five Elders.
+
+One Piece’s return means that some of the best moments of the Egghead arc will finally be animated, and the extra-long premiere will sell that even better.
+
+The visual aspect of it all also makes it exciting.
+
+One Piece went on hiatus at least partially so the animators wouldn’t be overworked and could continue to deliver the same gorgeous animation that’s been a constant since the Wano arc, and with the hiatus about to end,
+
+One Piece will likely have some of the most gorgeous animation in its entire history since its staff have been given time to avoid any potential burnout. Overall, there’s plenty to be excited about with One Piece’s return, and the extra-long premiere is the perfect way to kick that off.
+
+'''
+
+tokens = nltk.word_tokenize(article.lower())
+
+tokens // this prints the tokens
+# Build the bigram model (counting occurrences)
+bigram_counts = defaultdict(lambda: defaultdict(int))
+
+for w1, w2 in zip(tokens[:-1], tokens[1:]):
+    bigram_counts[w1][w2] += 1
+
+# Convert counts to probabilities (MLE estimation)
+bigram_probs = {w1: {w2: count / sum(next_words.values())
+                      for w2, count in next_words.items()}
+                for w1, next_words in bigram_counts.items()}
+
+# Function to generate text using the bigram model
+def generate_text(start_word, num_words=10):
+    sentence = [start_word]
+    for _ in range(num_words - 1):
+        next_word_options = bigram_probs.get(sentence[-1], None)
+        if not next_word_options:  # If no known next word, stop generation
+            break
+        next_word = random.choices(list(next_word_options.keys()),
+                                   weights=next_word_options.values())[0]
+        sentence.append(next_word)
+    return " ".join(sentence)
+
+
+
