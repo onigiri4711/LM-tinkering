@@ -56,7 +56,15 @@ def generate_text(start_word, num_words=10):
         next_word = random.choices(list(next_word_options.keys()),
                                    weights=next_word_options.values())[0]
         sentence.append(next_word)
-    return " ".join(sentence)
+    return " ".join(sentence)print(generate_text("animators",25))
+print(generate_text("one", 30))
+# Example: Generate a sentence starting with "piece"
+print(generate_text("piece",40))
+# Example: Generate a sentence starting with "animators"
+print(generate_text("animators", 50))
 
+
+#Yes the model is genrating coherent text now thanks to the power of staticsts. 
+#However this is not fully making sense completely hence marking out the limitations of a biagram perhaps we could increanse n for better comparison.
 
 
